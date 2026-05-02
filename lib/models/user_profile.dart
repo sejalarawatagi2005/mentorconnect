@@ -18,4 +18,30 @@ class UserProfile {
     this.entranceScore,
     this.countryPreference,
   });
+
+  Map<String, dynamic> toMap() {
+    return {
+      'collegePreference': collegePreference,
+      'elective': elective,
+      'interests': interests,
+      'projectsDone': projectsDone,
+      'skills': skills,
+      'cgpa': cgpa,
+      'entranceScore': entranceScore,
+      'countryPreference': countryPreference,
+    };
+  }
+
+  factory UserProfile.fromMap(Map<String, dynamic> map) {
+    return UserProfile(
+      collegePreference: map['collegePreference'],
+      elective: map['elective'],
+      interests: List<String>.from(map['interests'] ?? []),
+      projectsDone: map['projectsDone'],
+      skills: map['skills'],
+      cgpa: map['cgpa'],
+      entranceScore: map['entranceScore'],
+      countryPreference: map['countryPreference'],
+    );
+  }
 }

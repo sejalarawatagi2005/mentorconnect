@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../models/user_profile.dart';
+import '../services/database_service.dart';
 import 'college_prediction_screen.dart';
 
 class CareerQuizScreen extends StatefulWidget {
@@ -87,13 +88,38 @@ class _CareerQuizScreenState extends State<CareerQuizScreen> {
                   foregroundColor: Colors.white,
                   padding: const EdgeInsets.all(16),
                 ),
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const CollegePredictionScreen(),
-                    ),
-                  );
+                onPressed: () async {
+                  try {
+                    // Show loading
+                    showDialog(
+                      context: context,
+                      barrierDismissible: false,
+                      builder: (context) => const Center(child: CircularProgressIndicator()),
+                    );
+
+                    final databaseService = DatabaseService();
+                    await databaseService.saveUserProfile(_profile);
+
+                    if (mounted) {
+                      Navigator.pop(context); // Pop loading
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('Profile saved successfully!')),
+                      );
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const CollegePredictionScreen(),
+                        ),
+                      );
+                    }
+                  } catch (e) {
+                    if (mounted) {
+                      Navigator.pop(context); // Pop loading
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('Error saving profile: $e'), backgroundColor: Colors.red),
+                      );
+                    }
+                  }
                 },
                 child: const Text('Next / Submit', style: TextStyle(fontSize: 18)),
               ),
